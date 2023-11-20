@@ -149,7 +149,7 @@ def init_formule_simpl_for(formule_init,list_var):
     Renvoie : La formule simplifiée en tenant compte des valeurs logiques renseignées dans list_var
 '''
 
-'''
+
 list_var_for1=[False, None, None, False, None]
 for1=[[-5, -3, 4, -1], [3], [5, -2], [-2, 1, -4], [1, -3]]
 cor_for1=[[3], [5, -2], [-3]]
@@ -563,8 +563,120 @@ cor_list_var_grille2= [None, None, None, None, True, False, False, False, None, 
 test('test_init_list_var : ',init_list_var(grille2,2),cor_list_var_grille2)
 '''
 
+################################################""
+
+def determine_valuations(list_var):
+    '''Arguments : une liste de booléens informant de valeurs logiques connues 
+    (ou None dans le cas contraire) pour un ensemble de variables
+    Renvoie : La liste de toutes les valuations (sans doublon) envisageables pour les 
+    variables de list_var
+    '''
+    # détermination des indices où l'on trouve None
+    unknown = []
+    for i in range(len(list_var)):
+        if list_var[i] is None:
+            unknown.append(i)
+
+    # création des listes pour remplacer le None par True/False
+    valuations = []
+    boolen = [True, False]
+    for j in range(2**len(unknown)):
+        valuation = list_var.copy()
+        for k in range(len(unknown)):
+            valuation[unknown[k]] = boolen[(j >> k) & 1]
+        valuations.append(valuation)
+
+    return valuations
+
+list_var1=[True,None,False,None]
+print(test_determine_valuations('res_test_determine_valuations cas 1 : ',list_var1,[[True, True, False, True], [True, False, False, True], [True, True, False, False], [True, False, False, False]]))
+list_var2=[None,False,True,None,True,False]
+print(test_determine_valuations('res_test_determine_valuations cas 2 : ',list_var2,[[True, False, True, True, True, False], [False, False, True, True, True, False], [True, False, True, False, True, False], [False, False, True, False, True, False]]))
+list_var3=[False,True,True,False]
+print(test_determine_valuations('res_test_determine_valuations cas 3 : ',list_var3,[[False, True, True, False]]))
+list_var4=[None,None,None]
+print(test_determine_valuations('res_test_determine_valuations cas 4 : ',list_var4,[[True, True, True], [False, True, True], [True, False, True], [False, False, True], [True, True, False], [False, True, False], [True, False, False], [False, False, False]]))
 
 
+def resol_sat_force_brute(formule, list_var):
+    '''Arguments : une liste de listes d'entiers non nuls traduisant une formule,
+                   une liste de booléens informant de valeurs logiques connues 
+                   (ou None dans le cas contraire) pour un ensemble de variables
+       Renvoie : SAT, l1
+                 avec SAT : booléen indiquant la satisfiabilité de la formule
+                       l1 : une liste de valuations rendant la formule vraie ou une liste vide
+    '''
+    valuations = determine_valuations(list_var)
+
+    for val in valuations:
+        is_satisfiable = evaluer_cnf(formule, val)
+        if is_satisfiable:
+            return True, val
+
+    return False, []
+
+for1=[[1,2],[2,-3,4],[-1,-2],[-1,-2,-3],[1],[-1,2,3]]
+list_var_for1=[None,None,None,None]
+test('test1 resol_sat_force_brute : ',resol_sat_force_brute(for1,list_var_for1),(True,[True, False, True, True]))
+
+for2=[[1,4,-5],[-1,-5],[2,-3,5],[2,-4],[2,4,5],[-1,-2],[-1,2,-3],[-2,4,-5],[1,-2]]
+list_var_for2=[None,None,None,None,None]
+test('test2 resol_sat_force_brute : ',resol_sat_force_brute(for2,list_var_for2),(False,[]))
+
+for3=[[-1,-2],[-1,2,-3,4],[2,3,4],[3],[1,-4],[-1,2],[1,2]]# def determine_valuations(list_var):
+    '''Arguments : une liste de booléens informant de valeurs logiques connues 
+    (ou None dans le cas contraire) pour un ensemble de variables
+    Renvoie : La liste de toutes les valuations (sans doublon) envisageables pour les 
+    variables de list_var
+    '''
+    # détermination des indices où l'on trouve None
+    unknown = []
+    for i in range(len(list_var)):
+        if list_var[i] is None:
+            unknown.append(i)
+
+    # création des listes pour remplacer le None par True/False
+    valuations = []
+    boolen = [True, False]
+    for j in range(2**len(unknown)):
+        valuation = list_var.copy()
+        for k in range(len(unknown)):
+            valuation[unknown[k]] = boolen[(j >> k) & 1]
+        valuations.append(valuation)
+
+    return valuations
+
+list_var1=[True,None,False,None]
+print(test_determine_valuations('res_test_determine_valuations cas 1 : ',list_var1,[[True, True, False, True], [True, False, False, True], [True, True, False, False], [True, False, False, False]]))
+list_var2=[None,False,True,None,True,False]
+print(test_determine_valuations('res_test_determine_valuations cas 2 : ',list_var2,[[True, False, True, True, True, False], [False, False, True, True, True, False], [True, False, True, False, True, False], [False, False, True, False, True, False]]))
+list_var3=[False,True,True,False]
+print(test_determine_valuations('res_test_determine_valuations cas 3 : ',list_var3,[[False, True, True, False]]))
+list_var4=[None,None,None]
+print(test_determine_valuations('res_test_determine_valuations cas 4 : ',list_var4,[[True, True, True], [False, True, True], [True, False, True], [False, False, True], [True, True, False], [False, True, False], [True, False, False], [False, False, False]]))
+
+
+def resol_sat_force_brute(formule, list_var):
+    '''Arguments : une liste de listes d'entiers non nuls traduisant une formule,
+                   une liste de booléens informant de valeurs logiques connues 
+                   (ou None dans le cas contraire) pour un ensemble de variables
+       Renvoie : SAT, l1
+                 avec SAT : booléen indiquant la satisfiabilité de la formule
+                       l1 : une liste de valuations rendant la formule vraie ou une liste vide
+    '''
+    valuations = determine_valuations(list_var)
+
+    for val in valuations:
+        is_satisfiable = evaluer_cnf(formule, val)
+        if is_satisfiable:
+            return True, val
+
+list_var_for3=[None,None,None,None]
+test('test3 resol_sat_force_brute : ',resol_sat_force_brute(for3,list_var_for3),(True,[False, True, True, False]))
+
+for4=[[-1,-2],[-1,2,-3,4],[2,3,4],[3],[1,-4],[-1,2],[1,2]]
+list_var_for4=[None,None,None,True]
+test('test4 resol_sat_force_brute : ',resol_sat_force_brute(for4,list_var_for4),(False,[]))
 
 
 
