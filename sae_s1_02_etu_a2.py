@@ -248,14 +248,6 @@ for2= [[3, 2, 1], [-1, -2, 5]]
 cor_for2=[]
 test_for('test2_init_formule_simpl_for : ',init_formule_simpl_for(for2,list_var_for2),cor_for2)
 
-list_var_for3= [N, -2], [-3]]
-test_for('test1_init_formule_simpl_for : ',init_formule_simpl_for(for1,list_var_for1),cor_for1)
-
-list_var_for2= [False, True, False, True, False]
-for2= [[3, 2, 1], [-1, -2, 5]]
-cor_for2=[]
-test_for('test2_init_formule_simpl_for : ',init_formule_simpl_for(for2,list_var_for2),cor_for2)
-
 list_var_for3= [None, None, None, True, None]
 for3= [[-5, -1], [-1, -3], [4], [-4, 1], [-2, -1, 3]]
 cor_for3=[[-5, -1], [-1, -3], [1], [-2, -1, 3]]
