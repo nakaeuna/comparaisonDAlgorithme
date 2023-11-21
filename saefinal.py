@@ -68,34 +68,24 @@ def get(v:int, l:list):
     return l[v-1]
 
 def evaluer_clause(clause, list_var):
-    '''
-    Arguments : une liste d'entiers non nuls traduisant une clause, une liste de booléens 
-    informant de valeurs logiques connues (ou None dans le cas contraire) pour un ensemble 
-    de variables
-    Renvoie : None ou booléen
-    '''
+    if not clause:
+        return False
+
     result = False
     unknown = False
 
-    if len(clause)<1 :
-        return result
-    
     for i in clause:
-        var = get(abs(i), list_var) # sélection la variable correspondant à la clause (absolue)
-        if var == None :            # si var inconnue (None) -> pas calculable -> pass
-            unknown = True          # True si présance d'une var inconnue
-        else :
-            if i<0 : 
-                var = not(var) # si clause negative -> inverse la valeur
-            result = result or var  # calcul de la clause
-        if result : 
-            return result   # si un résultat True alors clause True
-    
-    if not(result) and unknown :  # si résultat False et présence d'une var inconnue donc potentiellement True alors result = None
-        result = None
-        return result
+        var = get(abs(i), list_var)
+        if var is None:
+            unknown = True
+        else:
+            var = not var if i < 0 else var
+            result = result or var
 
-    return result
+        if result:
+            return result
+
+    return None if unknown else result
     
 clause1=[1,-2,3,-4]
 list_var1=[True,True,False,None]
